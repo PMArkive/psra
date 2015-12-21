@@ -32,7 +32,7 @@ net.Receive("rupee_end_round", function()
 
 	local amount = tostring(net.ReadInt(32))
 	local state = net.ReadUInt(8)
-	local str = true
+	local str
 
 	if state == ROUND_SURVIVED then
 		str = "surviving"
@@ -260,15 +260,15 @@ surface.CreateFont("Deathrun_SmoothRP", {
 })
 
 -- Rupee colors.
-local rcolor_diamond    = Color(115, 230, 222)
-local rcolor_silver     = Color(192, 192, 192)
-local rcolor_gold       = Color(255, 215, 0)
-local rcolor_orange     = Color(205, 133, 0)
-local rcolor_purple     = Color(128, 0, 128)
-local rcolor_red        = Color(205, 55, 0)
-local rcolor_yellow     = Color(173, 255, 47)
-local rcolor_blue       = Color(113, 113, 198)
-local rcolor_green      = Color(0, 139, 69)
+local rcolor_diamond = Color(115, 230, 222)
+local rcolor_silver  = Color(192, 192, 192)
+local rcolor_gold    = Color(255, 215, 0)
+local rcolor_orange  = Color(205, 133, 0)
+local rcolor_purple  = Color(128, 0, 128)
+local rcolor_red     = Color(205, 55, 0)
+local rcolor_yellow  = Color(173, 255, 47)
+local rcolor_blue    = Color(113, 113, 198)
+local rcolor_green   = Color(0, 139, 69)
 
 -- Rupee Colors.
 function RupeeColors1(rupees)
@@ -297,15 +297,15 @@ function RupeeColors1(rupees)
 end
 
 local function GetRupeeHUD(val)
-	local cookie_num = (val or cookie.GetNumber("RupeeHUD_"..GAMEMODE.FolderName, 1))
-	local ret = rupee_huds[cookie_num]
+	local hud_index = (val or cookie.GetNumber("RupeeHUD_"..GAMEMODE.FolderName, 1))
+	local hud = rupee_huds[hud_index]
 
-	if ret == nil then
+	if hud == nil then
 		print("[RUPEES] HUD style not found! Trying to use style #1.")
-		ret = rupee_huds[1] or nil
+		hud = rupee_huds[1]
 	end
 
-	return ret
+	return hud
 end
 
 function PaintRupeeHUD(hud_index)

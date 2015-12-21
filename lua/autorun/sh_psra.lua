@@ -41,20 +41,3 @@ hook.Add("OnGamemodeLoaded", "RupeeSetup", function()
 		include(sv_gmfile)
 	end
 end)
-
--- Include the correct gamemode rupee file.
-hook.Add("OnGamemodeLoaded", "RupeeSetup", function()
-	print("[RUPEES] OnGamemodeLoaded hook called.")
-
-	local folder = GAMEMODE.FolderName
-	local cl_gmfile = "rupees/cl_" .. folder .. ".lua"
-	rupee_cookie = rupee_cookie .. folder
-
-	-- Include the correct rupee file.
-	if file.Exists(cl_gmfile, "LUA") then
-		print("[RUPEES] Loading \"" .. cl_gmfile .. "\".")
-		include(cl_gmfile)
-	else
-		ErrorNoHalt("[RUPEES] Couldn't find \"" .. cl_gmfile .. "\"!\n")
-	end
-end)
