@@ -125,4 +125,3 @@ hook.Add("TTTEndRound", "ClearRupoorBools", function()
 		plr:SetNWBool("dropped_rupoor", false)
 	end
 end)
-

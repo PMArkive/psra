@@ -369,4 +369,3 @@ table.Add(GetRupeeHUDsTable(), {
 })
 
 PaintRupeeHUD()
-

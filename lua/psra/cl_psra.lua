@@ -1,7 +1,6 @@
 local Color = Color
 
 -- HUD picking stuff
-local rupee_cookie = "RupeeHUD_"
 local rupee_huds = {}
 
 function GetRupeeHUDsTable()
@@ -298,7 +297,7 @@ function RupeeColors1(rupees)
 end
 
 local function GetRupeeHUD(val)
-	local cookie_num = (val or cookie.GetNumber(rupee_cookie, 1))
+	local cookie_num = (val or cookie.GetNumber("RupeeHUD_"..GAMEMODE.FolderName, 1))
 	local ret = rupee_huds[cookie_num]
 
 	if ret == nil then
@@ -324,27 +323,9 @@ concommand.Add("rupee_style", function(plr, cmd, args, fullStr)
 	local hud_index = tonumber(args[1])
 
 	if hud_index then
-		cookie.Set(rupee_cookie, hud_index)
+		cookie.Set("RupeeHUD_"..GAMEMODE.FolderName, hud_index)
 		PaintRupeeHUD(hud_index)
 	else
 		print("[RUPEES] Not a number, try again.")
 	end
 end, nil, "Used to pick the rupee HUD style.")
-
--- Include the correct gamemode rupee file.
-hook.Add("OnGamemodeLoaded", "RupeeSetup", function()
-	print("[RUPEES] OnGamemodeLoaded hook called.")
-
-	local folder = GAMEMODE.FolderName
-	local cl_gmfile = "rupees/cl_" .. folder .. ".lua"
-	rupee_cookie = rupee_cookie .. folder
-
-	-- Include the correct rupee file.
-	if file.Exists(cl_gmfile, "LUA") then
-		print("[RUPEES] Loading \"" .. cl_gmfile .. "\".")
-		include(cl_gmfile)
-	else
-		ErrorNoHalt("[RUPEES] Couldn't find \"" .. cl_gmfile .. "\"!\n")
-	end
-end)
-

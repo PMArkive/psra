@@ -279,26 +279,3 @@ hook.Add("PlayerSay", "RupeeDropChat", function(plr, text, isTeam)
 
 	return ""
 end)
-
--- Includes the correct file for the gamemode and sends the client
--- an accompanying client file for the gamemode.
-hook.Add("OnGamemodeLoaded", "RupeeSetup", function()
-	ServerLog("[RUPEES] OnGamemodeLoaded hook called.\n")
-
-	local folder = GAMEMODE.FolderName
-	local sv_gmfile = "rupees/sv_" .. folder .. ".lua"
-	local cl_gmfile = "rupees/cl_" .. folder .. ".lua"
-
-	if file.Exists(sv_gmfile, "LUA") and file.Exists(cl_gmfile, "LUA") then
-		ServerLog("[RUPEES] Loading \"" .. sv_gmfile .. "\".\n")
-		include(sv_gmfile)
-		ServerLog("[RUPEES] Sending \"" .. cl_gmfile .. "\" to clients.\n")
-		AddCSLuaFile(cl_gmfile)
-	else
-		ErrorNoHalt(
-			"[RUPEES] Couldn\'t find either \"" .. sv_gmfile ..
-			"\" or \"" .. cl_gmfile .. "\"!\n"
-		)
-	end
-end)
-
