@@ -1,72 +1,78 @@
 -----------------------------Config Area!-----------------------------
 
 -- Tag position within name
-TAGPOS_BEGIN   = 0
-TAGPOS_END     = 1
-TAGPOS_ANY     = 2
+front = 0
+back  = 1
+any   = 2
+
+-- Player roles
+ROLE_INNOCENT  = 0
+ROLE_TRAITOR   = 1
+ROLE_DETECTIVE = 2
+ROLE_NONE = ROLE_INNOCENT
 
 -- PointShop Rupee Addon
-PSRA = {
-	TAG = "[EX] ",
-	TAG_POS = TAGPOS_BEGIN,
-	TAG_FILE = "tag_users.txt",
+psra = {
+	tag = "[EX] ",
+	tag_position = front,
+	tag_users_file = "tag_users.txt",
 
-	MIN_QUOTA = 2,
-	MAX_QUOTA = 6,
+	quota_min = 2,
+	quota_max = 6,
 
-	RGF = { -- Rupees given for ...
-		TAG = 1337,
-		QUOTA = 6,
+	amounts = { -- Rupees given for ...
+		tag = 1337,
+		quota = 6,
 
-		I = { -- Innocent
-			WIN = 5,
+		ROLE_INNOCENT = { -- Innocent
+			win = 5,
 
-			KILL = {
-				I = 69,
-				D = 69,
-				T = 6
+			kill = {
+				ROLE_INNOCENT  = 69,
+				ROLE_DETECTIVE = 69,
+				ROLE_TRAITOR   = 6
 			}
 		},
 
-		T = { -- Traitor
-			WIN = 5,
+		ROLE_TRAITOR = { -- Traitor
+			win = 5,
 
-			KILL = {
-				I = 0,
-				D = 8,
-				T = 0
+			kill = {
+				ROLE_INNOCENT  = 0,
+				ROLE_DETECTIVE = 8,
+				ROLE_TRAITOR   = 0
 			}
 		},
 
-		D = { -- Detective
-			WIN = 5,
+		ROLE_DETECTIVE = { -- Detective
+			win = 5,
 
-			KILL = {
-				I = 0,
-				D = 69,
-				T = 6
+			kill = {
+				ROLE_INNOCENT  = 0,
+				ROLE_DETECTIVE = 69,
+				ROLE_TRAITOR   = 6
 			}
 		}
 	},
 
-	PEN = { -- Penalize
-		I = { -- Innocent
-			KILL = {
-				I = false,
-				D = true
+	pen = { -- Penalize
+		ROLE_INNOCENT = { -- Innocent
+			kill = {
+				ROLE_INNOCENT = false,
+				ROLE_DETECTIVE = true
 			}
 		},
 
-		D = { -- Detective
-			KILL = {
-				I = false,
-				D = true
+		ROLE_DETECTIVE = { -- Detective
+			kill = {
+				ROLE_INNOCENT = false,
+				ROLE_DETECTIVE = true
 			}
 		},
 
-		T = { -- Traitor
-			KILL = {
-				T = false
+		ROLE_TRAITOR = { -- Traitor
+			kill = {
+				ROLE_TRAITOR = false
 			}
 		}
 	}

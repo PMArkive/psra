@@ -1,15 +1,16 @@
+include("psra/sv_config.lua")
+
 local net = net
 local file = file
 local string = string
 
--- Make a local version of our config.
-local PSRA = PSRA
+-- Localize this shit yo
+local psra = psra
 
 math.randomseed(os.time())
 
 -- Send all of the resources needed to the client.
-local mf = resource.AddFile -- For multi-files
-mf("models/rupee/rupee_white.mdl")
+resource.AddFile("models/rupee/rupee_white.mdl")
 
 local sf = resource.AddSingleFile
 sf("sound/zelda/pickup.wav")
@@ -94,32 +95,35 @@ hook.Add("PlayerInitialSpawn", "InitialSpawnQuota", function(plr)
 end)
 
 -- Give the user rupees for wearing the community's tag.
--- The TAG_USERS_FILE's format is "STEAMID\r\nSTEAMID\r\n" etc.
-local tagFileData = file.Read(PSRA.TAG_FILE) or ""
-local cleantag = string.Trim(PSRA.TAG) or ""
+-- The tag_users_file's format is "STEAMID\r\nSTEAMID\r\n" etc.
+local tagFileData = file.Read(psra.tag_users_file) or ""
+local cleantag = string.Trim(psra.tag) or ""
 
 local function IsTagInName(name)
-	-- Not using elseif's here because it looks gross
-	if PSRA.TAG_POS == TAGPOS_BEGIN then
-		return string.find(name, PSRA.TAG, 1, true) == 1
+	local tag = psra.tag
+	local position = psra.tag_position
+
+	-- The tag-position variables are declared in sv_config.lua
+	if position == front then
+		return string.find(name, tag, 1, true) == 1
 	end
 
-	if PSRA.TAG_POS == TAGPOS_END then
-		return string.find(string.reverse(name), string.reverse(PSRA.TAG), 1, true) == 1
+	if position == back then
+		return string.find(string.reverse(name), string.reverse(tag), 1, true) == 1
 	end
 
-	if PSRA.TAG_POS == TAGPOS_ANY then
-		return string.find(name, PSRA.TAG, 1, true) ~= nil
+	if position == any then
+		return string.find(name, tag, 1, true) ~= nil
 	end
 
-	Error("[RUPEES] Invalid value within 'NAME_TAG_POSITION'!")
+	Error("[RUPEES] Invalid value given to the thing :L")
 end
 
-local function AddSteamIdToTagFile(steamID)
-	local sID = steamID .. "\r\n"
+local function AddSteamIdToTagFile(sid)
+	sid = sid .. "\r\n"
 	-- Append the ID to both the file and file data variable.
-	file.Append(PSRA.TAG_FILE, sID)
-	tagFileData = tagFileData .. sID
+	file.Append(psra.tag_users_file, sid)
+	tagFileData = tagFileData .. sid
 end
 
 local function IsSteamIdInTagFile(steamID)
@@ -128,9 +132,10 @@ end
 
 local function CheckForTag(plr)
 	if not IsValid(plr) then return end
-	local sID, name = plr:SteamID(), plr:Name()
+	local name = plr:Name()
+	local sid = plr:SteamID()
 
-	if not IsTagInName(name) or IsSteamIdInTagFile(sID) then return end
+	if not IsTagInName(name) or IsSteamIdInTagFile(sid) then return end
 
 	-- A timer is used to prevent name changes giving a player two bonuses.
 
@@ -138,10 +143,10 @@ local function CheckForTag(plr)
 	-- for steam name changes to update to GMOD clients.
 	timer.Simple(9, function()
 		-- Double check to prevent name changes from interfering.
-		if IsSteamIdInTagFile(sID) then return end
+		if IsSteamIdInTagFile(sid) then return end
 
-		AddSteamIdToTagFile(sID)
-		plr:PS_GivePoints(PSRA.RGF.TAG)
+		AddSteamIdToTagFile(sid)
+		plr:PS_GivePoints(psra.amounts.tag)
 		plr:RupeePickupSound()
 		plr:ChatPrint("Thank you for putting the " .. cleantag .. " tag on, enjoy the bonus!")
 	end)
@@ -149,12 +154,12 @@ end
 
 local function CheckForTagOnChange(plr, oldName, newName)
 	if not IsValid(plr) then return end
-	local sID = plr:SteamID()
+	local sid = plr:SteamID()
 
-	if not IsTagInName(newName) or IsSteamIdInTagFile(sID) then return end
+	if not IsTagInName(newName) or IsSteamIdInTagFile(sid) then return end
 
-	AddSteamIdToTagFile(sID)
-	plr:PS_GivePoints(PSRA.RGF.TAG)
+	AddSteamIdToTagFile(sid)
+	plr:PS_GivePoints(psra.amounts.tag)
 	plr:RupeePickupSound()
 	plr:ChatPrint("Thank you for putting on the " .. cleantag .. " tag, enjoy the Rupee bonus!")
 end
