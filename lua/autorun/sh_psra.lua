@@ -14,11 +14,8 @@ end
 -- Includes the correct file for the gamemode and sends the client
 -- an accompanying client file for the gamemode.
 hook.Add("OnGamemodeLoaded", "RupeeSetup", function()
-	ServerLog("[RUPEES] OnGamemodeLoaded hook called.\n")
-
 	local folder = GAMEMODE.FolderName
 	local cl_gmfile = "psra/cl_" .. folder .. ".lua"
-	local sv_gmfile = "psra/sv_" .. folder .. ".lua"
 
 	if file.Exists(cl_gmfile, "LUA") then
 		if SERVER then
@@ -33,10 +30,13 @@ hook.Add("OnGamemodeLoaded", "RupeeSetup", function()
 	end
 
 	if SERVER then
+		local sv_gmfile = "psra/sv_" .. folder .. ".lua"
+
 		if not file.Exists(sv_gmfile, "LUA") then
 			ErrorNoHalt("[RUPEES] Couldn\'t find \"" .. sv_gmfile .. "\"!")
 			return
 		end
+
 		ServerLog("[RUPEES] Loading \"" .. sv_gmfile .. "\".\n")
 		include(sv_gmfile)
 	end
