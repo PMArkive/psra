@@ -334,8 +334,8 @@ end, nil, "Used to pick the rupee HUD style.")
 --[[ We have this shit because of a chat-box addon that is used by our server.
 	With Scorpys Simple Chatbox, I just edited in the "psChatAddText" function
 	so it would add a ruby icon to the side of the chat message. It seemed
-	like the easiest option at the time.
-	In "lua/scorpy_chatbox/sh_init.lua" it looks like the indented code below.
+	like the easiest option at the time to just edit it in.
+	In "lua/scorpy_chatbox/sh_init.lua" it looks like the indented code below:
 
 		local oldChatAddText = chat.AddText
 
