@@ -75,23 +75,23 @@ net.Receive("rupee_kill_messages", function()
 	psChatAddText(unpack(blah))
 end)
 
-local color_transparent_black		= Color(0, 0, 0, 200)
-local color_transparent_white		= Color(255, 255, 255, 200)
-local color_less_transparent_black	= Color(0, 0, 0, 235)
-local color_greenish			= Color(0, 139, 69)
+local color_transparent_black      = Color(0, 0, 0, 200)
+local color_transparent_white      = Color(255, 255, 255, 200)
+local color_less_transparent_black = Color(0, 0, 0, 235)
+local color_greenish               = Color(0, 139, 69)
 
-local color_traitor			= Color(205, 60, 40)
-local color_innocent			= Color(170, 225, 100)
-local color_detective			= Color(115, 180, 200)
-local color_spectator			= Color(200, 200, 200)
+local color_traitor   = Color(205, 60, 40)
+local color_innocent  = Color(170, 225, 100)
+local color_detective = Color(115, 180, 200)
+local color_spectator = Color(200, 200, 200)
 
 local rupee_amount = "sick memes"
 
 -- Style 1
 -- The original HUD layout
 local function RupeeHUDStyle1()
-	local plr = LocalPlayer()
-	rupee_amount = plr:PS_GetPoints()
+	local lp = LocalPlayer()
+	rupee_amount = lp:PS_GetPoints()
 
 	local clr = "green"
 	if rupee_amount > 99999 then
@@ -110,11 +110,11 @@ local function RupeeHUDStyle1()
 
 	-- Set color based on the user's player status (istraitor/det/inno)
 	local rupee_color = color_innocent
-	if not PlayerIsAlive(plr) then
+	if not PlayerIsAlive(lp) then
 		rupee_color = color_spectator
-	elseif plr:IsTraitor() then
+	elseif lp:IsTraitor() then
 		rupee_color = color_traitor
-	elseif plr:IsDetective() then
+	elseif lp:IsDetective() then
 		rupee_color = color_detective
 	end
 
@@ -146,13 +146,13 @@ end
        --------
 ]]--
 local function RupeeHUDStyle2()
-	local plr = LocalPlayer()
-	rupee_amount = plr:PS_GetPoints()
+	local lp = LocalPlayer()
+	rupee_amount = lp:PS_GetPoints()
 
 	local shape = {}
 	local fX1, fX2, fY1, fY2
 
-	if PlayerIsAlive(plr) then
+	if PlayerIsAlive(lp) then
 		-- tmpX is the center of the screen
 		local tmpX = (ScrW() * 0.5)
 		-- scrX = (center of the screen - (long trapezoid side / 2))
@@ -216,12 +216,12 @@ end
 -- Style 3
 -- Same rupee locations as Style 2, just without the trapezoid
 local function RupeeHUDStyle3()
-	local plr = LocalPlayer()
-	rupee_amount = plr:PS_GetPoints()
+	local lp = LocalPlayer()
+	rupee_amount = lp:PS_GetPoints()
 
 	local fX1, fX2, fY1, fY2
 
-	if PlayerIsAlive(plr) then
+	if PlayerIsAlive(lp) then
 		-- tmpX is the center of the screen
 		local tmpX = (ScrW() * 0.5)
 		-- scrX = (center of the screen - (long trapezoid side / 2))
@@ -266,14 +266,14 @@ end
 -- Style 4
 -- Rupees in a rounded box (AKA, the shittiest looking style)
 local function RupeeHUDStyle4()
-	local plr = LocalPlayer()
-	rupee_amount = plr:PS_GetPoints()
+	local lp = LocalPlayer()
+	rupee_amount = lp:PS_GetPoints()
 
 	-- the letter `b' stands for box...for the roundedbox...the one that will be drawn
 	local bW, bH = 160, 70
 	local bX, bY
 
-	if PlayerIsAlive(plr) then
+	if PlayerIsAlive(lp) then
 		--bX = 270
 		--bY = ScrH() - 100
 		bX = (ScrW() * 0.5) - (bW / 2)
@@ -310,8 +310,8 @@ end
 
 -- Style 5
 local function RupeeHUDStyle5()
-	local plr = LocalPlayer()
-	rupee_amount = plr:PS_GetPoints()
+	local lp = LocalPlayer()
+	rupee_amount = lp:PS_GetPoints()
 
 	surface.SetFont("monosans2-rupees")
 	local tSize = surface.GetTextSize(rupee_amount)
@@ -325,7 +325,7 @@ local function RupeeHUDStyle5()
 	local rtX, rtY
 	local rtaX, rtaY
 
-	if PlayerIsAlive(plr) then
+	if PlayerIsAlive(lp) then
 		-- Place in the top-middle.
 		local scrMiddle = ScrW() * 0.5
 

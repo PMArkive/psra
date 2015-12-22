@@ -329,3 +329,34 @@ concommand.Add("rupee_style", function(plr, cmd, args, fullStr)
 		print("[RUPEES] Not a number, try again.")
 	end
 end, nil, "Used to pick the rupee HUD style.")
+
+
+--[[ We have this shit because of a chat-box addon that is used by our server.
+	With Scorpys Simple Chatbox, I just edited in the "psChatAddText" function
+	so it would add a ruby icon to the side of the chat message. It seemed
+	like the easiest option at the time.
+	In "lua/scorpy_chatbox/sh_init.lua" it looks like the indented code below.
+
+		local oldChatAddText = chat.AddText
+
+		function psChatAddText(...)
+			oldChatAddText(...)
+
+			Chatbox = Chatbox or vgui.Create("ScorpyChatbox")
+			Chatbox:AddMessage({...}, "icon16/ruby.png")
+		end
+
+		function chat.AddText(...)
+			oldChatAddText(...)
+
+			Chatbox = Chatbox or vgui.Create("ScorpyChatbox")
+			Chatbox:AddMessage({...})
+		end
+]]
+hook.Add("Initialize", "setup psChatAddText", function()
+	-- If SSC doesn't exist then we just use the regular chat.AddText
+	-- If SSC does exist then the function should be defined somewhere inside.
+	if not SSC then
+		psChatAddText = chat.AddText
+	end
+end)
