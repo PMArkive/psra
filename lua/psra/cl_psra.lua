@@ -1,6 +1,11 @@
 local Color = Color
 
+hook.Add("OnGamemodeLoaded", "gimme dat rupee cookie", function()
+	rupee_cookie = rupee_cookie .. GAMEMODE.FolderName
+end)
+
 -- HUD picking stuff
+local rupee_cookie = "RupeeHUD_"
 local rupee_huds = {}
 
 function GetRupeeHUDsTable()
@@ -297,7 +302,7 @@ function RupeeColors1(rupees)
 end
 
 local function GetRupeeHUD(val)
-	local hud_index = (val or cookie.GetNumber("RupeeHUD_"..GAMEMODE.FolderName, 1))
+	local hud_index = (val or cookie.GetNumber(rupee_cookie, 1))
 	local hud = rupee_huds[hud_index]
 
 	if hud == nil then
@@ -323,7 +328,7 @@ concommand.Add("rupee_style", function(plr, cmd, args, fullStr)
 	local hud_index = tonumber(args[1])
 
 	if hud_index then
-		cookie.Set("RupeeHUD_"..GAMEMODE.FolderName, hud_index)
+		cookie.Set(rupee_cookie, hud_index)
 		PaintRupeeHUD(hud_index)
 	else
 		print("[RUPEES] Not a number, try again.")
