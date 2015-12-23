@@ -8,8 +8,8 @@ end)
 local rupee_cookie = "RupeeHUD_"
 local rupee_huds = {}
 
-function GetRupeeHUDsTable()
-	return rupee_huds
+function AddRupeeHUD(index, func)
+	table.insert(rupee_huds, func)
 end
 
 local function RupeePickupSound()

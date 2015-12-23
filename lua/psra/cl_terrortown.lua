@@ -12,10 +12,10 @@ local function PlayerIsAlive(plr)
 end
 
 -- Some colors for the net messages!
-local plr_color = Color(0, 128, 255) -- Admin Blue
+local plr_color     = Color(0, 128, 255) -- Admin Blue
 local rupoor_purple = Color(90, 42, 141) -- Purple
-local amount_color = Color(36, 242, 17) -- Gold...ish
-local chat_color = color_white
+local amount_color  = Color(36, 242, 17) -- Gold...ish
+local chat_color    = color_white
 
 local roleNames = {
 	[ROLE_DETECTIVE] = "Detective",
@@ -89,7 +89,7 @@ local rupee_amount = "sick memes"
 
 -- Style 1
 -- The original HUD layout
-local function RupeeHUDStyle1()
+AddRupeeHUD(function()
 	local lp = LocalPlayer()
 	rupee_amount = lp:PS_GetPoints()
 
@@ -136,7 +136,7 @@ local function RupeeHUDStyle1()
 	draw.SimpleText("RUPEES: " .. rupee_amount, "FC_HUD_30",
 		mbX + sbW + ((mbW - sbW) * 0.5) + 1, mbY + (mbH * 0.5),
 		rupee_color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-end
+end)
 
 -- Style 2
 --[[ Rupees in trapezoid
@@ -145,7 +145,7 @@ end
       \ RUPEES /
        --------
 ]]--
-local function RupeeHUDStyle2()
+AddRupeeHUD(function()
 	local lp = LocalPlayer()
 	rupee_amount = lp:PS_GetPoints()
 
@@ -211,11 +211,11 @@ local function RupeeHUDStyle2()
 
 	draw.DrawText(rupee_amount, "monosans2-rupees", fX1, fY1, rupee_color, TEXT_ALIGN_CENTER)
 	draw.DrawText(word, "monosans2-text", fX2, fY2, color_white, TEXT_ALIGN_CENTER)
-end
+end)
 
 -- Style 3
 -- Same rupee locations as Style 2, just without the trapezoid
-local function RupeeHUDStyle3()
+AddRupeeHUD(function()
 	local lp = LocalPlayer()
 	rupee_amount = lp:PS_GetPoints()
 
@@ -261,11 +261,11 @@ local function RupeeHUDStyle3()
 
 	draw.DrawText(rupee_amount, "monosans2-rupees", fX1, fY1, rupee_color, TEXT_ALIGN_CENTER)
 	draw.DrawText(word, "monosans2-text", fX2, fY2, color_white, TEXT_ALIGN_CENTER)
-end
+end)
 
 -- Style 4
 -- Rupees in a rounded box (AKA, the shittiest looking style)
-local function RupeeHUDStyle4()
+AddRupeeHUD(function()
 	local lp = LocalPlayer()
 	rupee_amount = lp:PS_GetPoints()
 
@@ -306,10 +306,10 @@ local function RupeeHUDStyle4()
 	-- `color_white' is a value defined by GMOD itself
 	draw.DrawText(word, "monosans2-text", fX1, fY1, color_white, TEXT_ALIGN_CENTER)
 	draw.DrawText(rupee_amount, "monosans2-rupees", fX2, fY2, rupee_color, TEXT_ALIGN_CENTER)
-end
+end)
 
 -- Style 5
-local function RupeeHUDStyle5()
+AddRupeeHUD(function()
 	local lp = LocalPlayer()
 	rupee_amount = lp:PS_GetPoints()
 
@@ -357,15 +357,4 @@ local function RupeeHUDStyle5()
 	draw.RoundedBox(4, fpX, fpY, fpW, fpH, color_greenish)
 
 	draw.SimpleText(rupee_amount, "monosans2-rupees", rtX, rtY, color_white, rtaX, rtaY)
-end
-
--- Setup Rupee HUD painting stuff then paint that shit
-table.Add(GetRupeeHUDsTable(), {
-	RupeeHUDStyle1,
-	RupeeHUDStyle2,
-	RupeeHUDStyle3,
-	RupeeHUDStyle4,
-	RupeeHUDStyle5,
-})
-
-PaintRupeeHUD()
+end)

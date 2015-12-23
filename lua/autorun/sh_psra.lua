@@ -24,6 +24,7 @@ hook.Add("OnGamemodeLoaded", "RupeeSetup", function()
 		else
 			print("[RUPEES] Loading \"" .. cl_gmfile .. "\".")
 			include(cl_gmfile)
+			PaintRupeeHUD()
 		end
 	else
 		ErrorNoHalt("[RUPEES] Couldn\'t find \"" .. cl_gmfile .. "\"!")
