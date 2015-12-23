@@ -1,12 +1,12 @@
 local Color = Color
 
-hook.Add("OnGamemodeLoaded", "gimme dat rupee cookie", function()
-	rupee_cookie = rupee_cookie .. GAMEMODE.FolderName
-end)
-
 -- HUD picking stuff
 local rupee_cookie = "RupeeHUD_"
 local rupee_huds = {}
+
+hook.Add("OnGamemodeLoaded", "gimme dat rupee cookie", function()
+	rupee_cookie = rupee_cookie .. GAMEMODE.FolderName
+end)
 
 function AddRupeeHUD(index, func)
 	table.insert(rupee_huds, func)
@@ -37,16 +37,7 @@ net.Receive("rupee_end_round", function()
 
 	local amount = tostring(net.ReadInt(32))
 	local state = net.ReadUInt(8)
-	local str
-
-	if state == ROUND_SURVIVED then
-		str = "surviving"
-	elseif state == ROUND_WON then
-		str = "winning"
-	else
-		ErrorNoHalt("Bad value passed to \'state\'!")
-		return
-	end
+	local str = (state == ROUND_SURVIVED) and "surviving" or "winning"
 
 	psChatAddText(
 		chat_color,
@@ -135,16 +126,15 @@ net.Receive("rupee_pickup_message", function()
 		return -- Well, that's that, so let's leave.
 	end
 
-	local did_client_pickup = LocalPlayer() == pickup_plr
-	local plr = (did_client_pickup and drop_plr or pickup_plr)
+	local localplayer_pickup = LocalPlayer() == pickup_plr
+	local plr = localplayer_pickup and drop_plr or pickup_plr
 
 	local plr_name = IsValid(plr) and
-			plr:GetName() .. (did_client_pickup and "\'s" or "")
-			or
-			(did_client_pickup and "somebody\'s" or "Somebody")
+			(plr:GetName() .. (localplayer_pickup and "\'s" or "")) or
+			(localplayer_pickup and "somebody\'s" or "Somebody")
 
 	if amount == "0" then -- The amount can only be 0 if it's a rupoor.
-		if did_client_pickup then
+		if localplayer_pickup then
 			RupoorPickupSound()
 			psChatAddText(
 				chat_color,
@@ -176,7 +166,7 @@ net.Receive("rupee_pickup_message", function()
 
 	-- This is ugly as fuckkkkkkkk, please forgive me Lord!
 	if is_rupoor then
-		if did_client_pickup then
+		if localplayer_pickup then
 			RupoorPickupSound()
 			psChatAddText(
 				chat_color,
@@ -211,7 +201,7 @@ net.Receive("rupee_pickup_message", function()
 			)
 		end
 	else
-		if did_client_pickup then
+		if localplayer_pickup then
 			RupeePickupSound()
 			psChatAddText(
 				chat_color,
