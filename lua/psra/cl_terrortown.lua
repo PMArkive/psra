@@ -87,6 +87,16 @@ local color_spectator = Color(200, 200, 200)
 
 local rupee_amount = "sick memes"
 
+local image_materials = {
+	green  = Material("rupees/green.png"),
+	blue   = Material("rupees/blue.png"),
+	yellow = Material("rupees/yellow.png"),
+	red    = Material("rupees/red.png"),
+	purple = Material("rupees/purple.png"),
+	orange = Material("rupees/orange.png"),
+	white  = Material("rupees/white.png"),
+}
+
 -- Style 1
 -- The original HUD layout
 AddRupeeHUD(function()
@@ -130,7 +140,7 @@ AddRupeeHUD(function()
 	draw.RoundedBox(2, sbX, sbY, sbW, sbH, color_transparent_white)
 
 	-- Draw rupee picture in white box
-	surface.SetMaterial(Material("rupees/" .. clr .. ".png"))
+	surface.SetMaterial(image_materials[clr])
 	surface.DrawTexturedRect(mbX + 1, mbY + 6, 18, 18)
 
 	draw.SimpleText("RUPEES: " .. rupee_amount, "FC_HUD_30",
@@ -196,7 +206,7 @@ AddRupeeHUD(function()
 		end
 	end
 
-	-- Easter egg, shhh
+	-- unfunny Easter egg, shhh
 	local word = "RUPEES"
 	if rupee_amount > 999999 then
 		word = "PEEPEES"
