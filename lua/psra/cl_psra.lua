@@ -326,26 +326,26 @@ concommand.Add("rupee_style", function(plr, cmd, args, fullStr)
 end, nil, "Used to pick the rupee HUD style.")
 
 --[[ We have this shit because of a chat-box addon that is used by our server.
-	With Scorpys Simple Chatbox, I just edited in the "psChatAddText" function
-	so it would add a ruby icon to the side of the chat message. It seemed
-	like the easiest option at the time to just edit it in.
-	In "lua/scorpy_chatbox/sh_init.lua" it looks like the indented code below:
+ With Scorpys Simple Chatbox, I just edited in the "psChatAddText" function
+ so it would add a ruby icon to the side of the chat message. It seemed
+ like the easiest option at the time to just edit it in.
+ In "lua/scorpy_chatbox/sh_init.lua" it looks like the indented code below:
 
-		local oldChatAddText = chat.AddText
+ 	local oldChatAddText = chat.AddText
 
-		function psChatAddText(...)
-			oldChatAddText(...)
+ 	function psChatAddText(...)
+ 		oldChatAddText(...)
 
-			Chatbox = Chatbox or vgui.Create("ScorpyChatbox")
-			Chatbox:AddMessage({...}, "icon16/ruby.png")
-		end
+ 		Chatbox = Chatbox or vgui.Create("ScorpyChatbox")
+ 		Chatbox:AddMessage({...}, "icon16/ruby.png")
+ 	end
 
-		function chat.AddText(...)
-			oldChatAddText(...)
+ 	function chat.AddText(...)
+ 		oldChatAddText(...)
 
-			Chatbox = Chatbox or vgui.Create("ScorpyChatbox")
-			Chatbox:AddMessage({...})
-		end
+ 		Chatbox = Chatbox or vgui.Create("ScorpyChatbox")
+ 		Chatbox:AddMessage({...})
+ 	end
 ]]
 hook.Add("Initialize", "setup psChatAddText", function()
 	-- If SSC exists, then psChatAddText will be defined somewhere in there.
