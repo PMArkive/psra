@@ -1,5 +1,6 @@
 -- I'd like to believe that this file is understandable, but then I see
 -- how much nested shit I've written and realize that's probably not true.
+-- UPDATE 2015-12-31: It's definitely gotten better since this comment.
 
 local math = math
 local Color = Color

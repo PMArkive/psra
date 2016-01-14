@@ -1,7 +1,7 @@
 local Color = Color
 
 -- HUD picking stuff
-local rupee_cookie = "RupeeHUD_"
+local rupee_cookie = "RupeeHUD_" -- used by the 'rupee_style' command
 local rupee_huds = {}
 
 hook.Add("OnGamemodeLoaded", "gimme dat rupee cookie", function()
