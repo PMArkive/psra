@@ -78,7 +78,7 @@ hook.Add("TTTBeginRound", "SetupRoundKillQuota", function()
 		end
 	end
 
-	ROUND_KILL_QUOTA = math.Clamp(math.floor(traitors-1), psra.quota_min, psra.quota_max)
+	ROUND_KILL_QUOTA = math.Clamp(traitors-1, psra.quota_min, psra.quota_max)
 end)
 
 -- Setup rupee notifications at the end of the round.
