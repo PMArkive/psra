@@ -85,7 +85,7 @@ local color_innocent  = Color(170, 225, 100)
 local color_detective = Color(115, 180, 200)
 local color_spectator = Color(200, 200, 200)
 
-local rupee_amount = "sick memes"
+local rupee_amount
 
 local image_materials = {
 	green  = Material("rupees/green.png"),
