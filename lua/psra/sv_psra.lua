@@ -205,7 +205,7 @@ hook.Add("PlayerSay", "RupeeDropChat", function(plr, text, isTeam)
 
 	local amount = tonumber(words[2])
 	if amount == nil then
-		plr:ChatPrint("Please enter a valid number for !drop|/drop")
+		plr:ChatPrint("Enter a valid number for !drop|/drop")
 		return ""
 	end
 
