@@ -17,35 +17,39 @@ psra = {
 	tag_position = front,
 	tag_users_file = "tag_users.txt",
 
+	-- The minimum number of non-traitors a traitor needs to kill before
+	--  getting the Quota-completion rupee reward thing.
 	quota_min = 2,
+	-- The maximum number of non-traitors a traitor needs to kill before
+	--  getting the Quota-completion rupee reward thing.
 	quota_max = 6,
 
 	amounts = { -- Rupees given for ...
-		tag = 1337,
-		quota = 6,
+		tag = 2000,
+		quota = 25,
 
 		ROLE_INNOCENT = { -- Innocent
-			win = 5,
+			win = 25,
 
 			kill = {
-				ROLE_INNOCENT  = 69,
+				ROLE_INNOCENT  = 10,
 				ROLE_DETECTIVE = 69,
 				ROLE_TRAITOR   = 6
 			}
 		},
 
 		ROLE_TRAITOR = { -- Traitor
-			win = 5,
+			win = 25,
 
 			kill = {
 				ROLE_INNOCENT  = 0,
-				ROLE_DETECTIVE = 8,
+				ROLE_DETECTIVE = 50,
 				ROLE_TRAITOR   = 0
 			}
 		},
 
 		ROLE_DETECTIVE = { -- Detective
-			win = 5,
+			win = 25,
 
 			kill = {
 				ROLE_INNOCENT  = 0,
