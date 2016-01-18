@@ -4,10 +4,16 @@ local net = net
 local file = file
 local string = string
 
+local find = string.find
+local reverse = string.reverse
+
 -- Localize this shit yo
 local psra = psra
 
 math.randomseed(os.time())
+
+-------
+-- TODO: Find out if all this resource shit is done by FastDL.
 
 -- Send all of the resources needed to the client.
 resource.AddFile("models/rupee/rupee_white.mdl")
@@ -105,15 +111,15 @@ local function IsTagInName(name)
 
 	-- The tag-position variables are declared in sv_config.lua
 	if position == front then
-		return string.find(name, tag, 1, true) == 1
+		return find(name, tag, 1, true) == 1
 	end
 
 	if position == back then
-		return string.find(string.reverse(name), string.reverse(tag), 1, true) == 1
+		return find(reverse(name), reverse(tag), 1, true) == 1
 	end
 
 	if position == any then
-		return string.find(name, tag, 1, true) ~= nil
+		return find(name, tag, 1, true) ~= nil
 	end
 
 	Error("[RUPEES] Invalid value given to the thing :L")
@@ -127,7 +133,7 @@ local function AddSteamIdToTagFile(sid)
 end
 
 local function IsSteamIdInTagFile(steamID)
-	return string.find(tagFileData, steamID, 1, true) ~= nil
+	return find(tagFileData, steamID, 1, true) ~= nil
 end
 
 local function CheckForTag(plr)
@@ -178,8 +184,9 @@ local rcolor_ent_150        = Color(255, 255, 0)
 local rcolor_ent_50         = Color(0, 0, 255)
 
 -- Made entShootPosVec static so Vector() isn't called multiple times.
-local entShootPosVec        = Vector(0, 0, 20)
+local entShootPosVec = Vector(0, 0, 20)
 
+-- TODO: Make a rupee_drop command.
 -- /drop|!drop check hook
 hook.Add("PlayerSay", "RupeeDropChat", function(plr, text, isTeam)
 	if not IsValid(plr) then return "" end
