@@ -1,11 +1,10 @@
 -- I'd like to believe that this file is understandable, but then I see
 -- how much nested shit I've written and realize that's probably not true.
--- UPDATE 2015-12-31: It's definitely gotten better since this comment.
 
 local math = math
 local Color = Color
 
-local psra = psra
+local PSRA = PSRA
 
 local ROUND_KILL_QUOTA = 0
 
@@ -31,39 +30,47 @@ function RoundIsInactive()
 	return GetRoundState() == ROUND_POST
 end
 
+local roleLetters = {
+	[ROLE_DETECTIVE] = "D",
+	[ROLE_INNOCENT] = "I",
+	[ROLE_TRAITOR] = "T"
+}
+
 -- Kill rewards and penalties hooks
-hook.Add("PlayerDeath", "RupeeKillRewardsAndPenalties", function(vic, item, att)
-	if not (IsValid(vic) and IsValid(att)) then return end
-	if not (att:IsPlayer() and vic:IsPlayer()) or (vic == att) then return end
-	if att:IsBot() or vic:IsBot() then return end
+hook.Add("PlayerDeath", "RupeeKillRewardsAndPenalties", function(vic, item, attk)
+	if not (IsValid(vic) and IsValid(attk)) then return end
+	if not (attk:IsPlayer() and vic:IsPlayer()) or (vic == attk) then return end
+	if attk:IsBot() or vic:IsBot() then return end
 	if GetRoundState() ~= ROUND_ACTIVE then return end
 
-	local attrole = att:GetRole()
+	local attkrole = attk:GetRole()
+	local attkletter = roleLetters[attkrole]
 	local vicrole = vic:GetRole()
+	local vicletter = roleLetters[vicrole]
 
-	local penalty = psra.pen[attrole].kill[vicrole]
-	local pts = psra.amounts[attrole].kill[vicrole]
+	local penalty = PSRA.PEN[attkletter].KILL[vicletter]
+	local pts = PSRA.RGF[attkletter].KILL[vicletter]
 
 	-- If there is a penalty from det-kill-det or traitor-kill-traitor.
 	if penalty ~= nil then
 		if not penalty then return end
-		att:PS_TakePoints(pts)
-		att:RupeeKillMessages(vic, pts, true)
-		att:RupoorPickupSound()
+		attk:PS_TakePoints(pts)
+		attk:RupeeKillMessages(vic, pts, true)
+		attk:RupoorPickupSound()
 	-- For the traitor's innocent-kills quota.
-	elseif attrole == ROLE_TRAITOR and vicrole == ROLE_INNOCENT then
-		if att:IncreaseQuotaKills() >= ROUND_KILL_QUOTA then
-			pts = psra.amounts.quota
-			att:ResetQuotaKills()
-			att:PS_GivePoints(pts)
-			att:RupeeKillMessages(vic, pts, false, ROUND_KILL_QUOTA)
-			att:RupeePickupSound()
+	elseif attkrole == ROLE_TRAITOR and vicrole == ROLE_INNOCENT then
+		if attk:IncreaseQuotaKills() >= ROUND_KILL_QUOTA then
+			pts = PSRA.RGF.QUOTA
+			attk:ResetQuotaKills()
+			attk:PS_GivePoints(pts)
+			attk:RupeeKillMessages(vic, pts, false, ROUND_KILL_QUOTA)
+			attk:RupeePickupSound()
 		end
 	-- If there is a reward or traitor-kill-det or something.
 	elseif pts ~= nil and pts > 0 then
-		att:PS_GivePoints(pts)
-		att:RupeeKillMessages(vic, pts, false)
-		att:RupeePickupSound()
+		attk:PS_GivePoints(pts)
+		attk:RupeeKillMessages(vic, pts, false)
+		attk:RupeePickupSound()
 	end
 end)
 
@@ -78,7 +85,7 @@ hook.Add("TTTBeginRound", "SetupRoundKillQuota", function()
 		end
 	end
 
-	ROUND_KILL_QUOTA = math.Clamp(traitors-1, psra.quota_min, psra.quota_max)
+	ROUND_KILL_QUOTA = math.Clamp(math.floor(traitors-1), PSRA.MIN_QUOTA, PSRA.MAX_QUOTA)
 end)
 
 -- Setup rupee notifications at the end of the round.
@@ -93,7 +100,7 @@ hook.Add("TTTEndRound", "RupeeRoundEndNotifications", function(result)
 	if result == WIN_TRAITOR then
 		for _, plr in pairs(plrs) do
 			if PlayerIsAlive(plr) and plr:IsTraitor() then
-				local pts = psra.amounts[ROLE_TRAITOR].WIN
+				local pts = PSRA.RGF.T.WIN
 				plr:PS_GivePoints(pts)
 				plr:RupeeEndRound(pts, ROUND_WON)
 				plr:RupeePickupSound()
@@ -102,7 +109,7 @@ hook.Add("TTTEndRound", "RupeeRoundEndNotifications", function(result)
 	else
 		for _, plr in pairs(plrs) do
 			if PlayerIsAlive(plr) and not plr:IsTraitor() then
-				local pts = psra.amounts[plr:GetRole()].win
+				local pts = plr:IsDetective() and PSRA.RGF.D.WIN or PSRA.RGF.I.WIN
 				plr:PS_GivePoints(pts)
 				plr:RupeeEndRound(pts, ROUND_SURVIVED)
 				plr:RupeePickupSound()
@@ -118,3 +125,4 @@ hook.Add("TTTEndRound", "ClearRupoorBools", function()
 		plr:SetNWBool("dropped_rupoor", false)
 	end
 end)
+

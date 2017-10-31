@@ -1,22 +1,14 @@
-include("psra/sv_config.lua")
-
 local net = net
 local file = file
 local string = string
 
-local find = string.find
-local reverse = string.reverse
-
--- Localize this shit yo
-local psra = psra
+local PSRA = PSRA
 
 math.randomseed(os.time())
 
--------
--- TODO: Find out if all this resource shit is done by FastDL.
-
 -- Send all of the resources needed to the client.
-resource.AddFile("models/rupee/rupee_white.mdl")
+local mf = resource.AddFile -- For multi-files
+mf("models/rupee/rupee_white.mdl")
 
 local sf = resource.AddSingleFile
 sf("sound/zelda/pickup.wav")
@@ -101,47 +93,43 @@ hook.Add("PlayerInitialSpawn", "InitialSpawnQuota", function(plr)
 end)
 
 -- Give the user rupees for wearing the community's tag.
--- The tag_users_file's format is "STEAMID\r\nSTEAMID\r\n" etc.
-local tagFileData = file.Read(psra.tag_users_file) or ""
-local cleantag = string.Trim(psra.tag) or ""
+-- The TAG_USERS_FILE's format is "STEAMID\r\nSTEAMID\r\n" etc.
+local tagFileData = file.Read(PSRA.TAG_FILE) or ""
+local cleantag = string.Trim(PSRA.TAG) or ""
 
 local function IsTagInName(name)
-	local tag = psra.tag
-	local position = psra.tag_position
-
-	-- The tag-position variables are declared in sv_config.lua
-	if position == front then
-		return find(name, tag, 1, true) == 1
+	-- Not using elseif's here because it looks gross
+	if PSRA.TAG_POS == TAGPOS_BEGIN then
+		return string.find(name, PSRA.TAG, 1, true) == 1
 	end
 
-	if position == back then
-		return find(reverse(name), reverse(tag), 1, true) == 1
+	if PSRA.TAG_POS == TAGPOS_END then
+		return string.find(string.reverse(name), string.reverse(PSRA.TAG), 1, true) == 1
 	end
 
-	if position == any then
-		return find(name, tag, 1, true) ~= nil
+	if PSRA.TAG_POS == TAGPOS_ANY then
+		return string.find(name, PSRA.TAG, 1, true) ~= nil
 	end
 
-	Error("[RUPEES] Invalid value given to the thing :L")
+	Error("[RUPEES] Invalid value within 'NAME_TAG_POSITION'!")
 end
 
-local function AddSteamIdToTagFile(sid)
-	sid = sid .. "\r\n"
+local function AddSteamIdToTagFile(steamID)
+	local sID = steamID .. "\r\n"
 	-- Append the ID to both the file and file data variable.
-	file.Append(psra.tag_users_file, sid)
-	tagFileData = tagFileData .. sid
+	file.Append(PSRA.TAG_FILE, sID)
+	tagFileData = tagFileData .. sID
 end
 
 local function IsSteamIdInTagFile(steamID)
-	return find(tagFileData, steamID, 1, true) ~= nil
+	return string.find(tagFileData, steamID, 1, true) ~= nil
 end
 
 local function CheckForTag(plr)
 	if not IsValid(plr) then return end
-	local name = plr:Name()
-	local sid = plr:SteamID()
+	local sID, name = plr:SteamID(), plr:Name()
 
-	if not IsTagInName(name) or IsSteamIdInTagFile(sid) then return end
+	if not IsTagInName(name) or IsSteamIdInTagFile(sID) then return end
 
 	-- A timer is used to prevent name changes giving a player two bonuses.
 
@@ -149,10 +137,10 @@ local function CheckForTag(plr)
 	-- for steam name changes to update to GMOD clients.
 	timer.Simple(9, function()
 		-- Double check to prevent name changes from interfering.
-		if IsSteamIdInTagFile(sid) then return end
+		if IsSteamIdInTagFile(sID) then return end
 
-		AddSteamIdToTagFile(sid)
-		plr:PS_GivePoints(psra.amounts.tag)
+		AddSteamIdToTagFile(sID)
+		plr:PS_GivePoints(PSRA.RGF.TAG)
 		plr:RupeePickupSound()
 		plr:ChatPrint("Thank you for putting the " .. cleantag .. " tag on, enjoy the bonus!")
 	end)
@@ -160,12 +148,12 @@ end
 
 local function CheckForTagOnChange(plr, oldName, newName)
 	if not IsValid(plr) then return end
-	local sid = plr:SteamID()
+	local sID = plr:SteamID()
 
-	if not IsTagInName(newName) or IsSteamIdInTagFile(sid) then return end
+	if not IsTagInName(newName) or IsSteamIdInTagFile(sID) then return end
 
-	AddSteamIdToTagFile(sid)
-	plr:PS_GivePoints(psra.amounts.tag)
+	AddSteamIdToTagFile(sID)
+	plr:PS_GivePoints(PSRA.RGF.TAG)
 	plr:RupeePickupSound()
 	plr:ChatPrint("Thank you for putting on the " .. cleantag .. " tag, enjoy the Rupee bonus!")
 end
@@ -184,9 +172,8 @@ local rcolor_ent_150        = Color(255, 255, 0)
 local rcolor_ent_50         = Color(0, 0, 255)
 
 -- Made entShootPosVec static so Vector() isn't called multiple times.
-local entShootPosVec = Vector(0, 0, 20)
+local entShootPosVec        = Vector(0, 0, 20)
 
--- TODO: Make a rupee_drop command.
 -- /drop|!drop check hook
 hook.Add("PlayerSay", "RupeeDropChat", function(plr, text, isTeam)
 	if not IsValid(plr) then return "" end
@@ -212,7 +199,7 @@ hook.Add("PlayerSay", "RupeeDropChat", function(plr, text, isTeam)
 
 	local amount = tonumber(words[2])
 	if amount == nil then
-		plr:ChatPrint("Enter a valid number for !drop|/drop")
+		plr:ChatPrint("Please enter a valid number for !drop|/drop")
 		return ""
 	end
 
@@ -286,3 +273,26 @@ hook.Add("PlayerSay", "RupeeDropChat", function(plr, text, isTeam)
 
 	return ""
 end)
+
+-- Includes the correct file for the gamemode and sends the client
+-- an accompanying client file for the gamemode.
+hook.Add("OnGamemodeLoaded", "RupeeSetup", function()
+	ServerLog("[RUPEES] OnGamemodeLoaded hook called.\n")
+
+	local folder = GAMEMODE.FolderName
+	local sv_gmfile = "rupees/sv_" .. folder .. ".lua"
+	local cl_gmfile = "rupees/cl_" .. folder .. ".lua"
+
+	if file.Exists(sv_gmfile, "LUA") and file.Exists(cl_gmfile, "LUA") then
+		ServerLog("[RUPEES] Loading \"" .. sv_gmfile .. "\".\n")
+		include(sv_gmfile)
+		ServerLog("[RUPEES] Sending \"" .. cl_gmfile .. "\" to clients.\n")
+		AddCSLuaFile(cl_gmfile)
+	else
+		ErrorNoHalt(
+			"[RUPEES] Couldn\'t find either \"" .. sv_gmfile ..
+			"\" or \"" .. cl_gmfile .. "\"!\n"
+		)
+	end
+end)
+

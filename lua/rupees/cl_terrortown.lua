@@ -12,10 +12,10 @@ local function PlayerIsAlive(plr)
 end
 
 -- Some colors for the net messages!
-local plr_color     = Color(0, 128, 255) -- Admin Blue
+local plr_color = Color(0, 128, 255) -- Admin Blue
 local rupoor_purple = Color(90, 42, 141) -- Purple
-local amount_color  = Color(36, 242, 17) -- Gold...ish
-local chat_color    = color_white
+local amount_color = Color(36, 242, 17) -- Gold...ish
+local chat_color = color_white
 
 local roleNames = {
 	[ROLE_DETECTIVE] = "Detective",
@@ -75,33 +75,23 @@ net.Receive("rupee_kill_messages", function()
 	psChatAddText(unpack(blah))
 end)
 
-local color_transparent_black      = Color(0, 0, 0, 200)
-local color_transparent_white      = Color(255, 255, 255, 200)
-local color_less_transparent_black = Color(0, 0, 0, 235)
-local color_greenish               = Color(0, 139, 69)
+local color_transparent_black		= Color(0, 0, 0, 200)
+local color_transparent_white		= Color(255, 255, 255, 200)
+local color_less_transparent_black	= Color(0, 0, 0, 235)
+local color_greenish			= Color(0, 139, 69)
 
-local color_traitor   = Color(205, 60, 40)
-local color_innocent  = Color(170, 225, 100)
-local color_detective = Color(115, 180, 200)
-local color_spectator = Color(200, 200, 200)
+local color_traitor			= Color(205, 60, 40)
+local color_innocent			= Color(170, 225, 100)
+local color_detective			= Color(115, 180, 200)
+local color_spectator			= Color(200, 200, 200)
 
-local rupee_amount
-
-local image_materials = {
-	green  = Material("rupees/green.png"),
-	blue   = Material("rupees/blue.png"),
-	yellow = Material("rupees/yellow.png"),
-	red    = Material("rupees/red.png"),
-	purple = Material("rupees/purple.png"),
-	orange = Material("rupees/orange.png"),
-	white  = Material("rupees/white.png"),
-}
+local rupee_amount = "sick memes"
 
 -- Style 1
 -- The original HUD layout
-AddRupeeHUD(function()
-	local lp = LocalPlayer()
-	rupee_amount = lp:PS_GetPoints()
+local function RupeeHUDStyle1()
+	local plr = LocalPlayer()
+	rupee_amount = plr:PS_GetPoints()
 
 	local clr = "green"
 	if rupee_amount > 99999 then
@@ -120,11 +110,11 @@ AddRupeeHUD(function()
 
 	-- Set color based on the user's player status (istraitor/det/inno)
 	local rupee_color = color_innocent
-	if not PlayerIsAlive(lp) then
+	if not PlayerIsAlive(plr) then
 		rupee_color = color_spectator
-	elseif lp:IsTraitor() then
+	elseif plr:IsTraitor() then
 		rupee_color = color_traitor
-	elseif lp:IsDetective() then
+	elseif plr:IsDetective() then
 		rupee_color = color_detective
 	end
 
@@ -140,13 +130,13 @@ AddRupeeHUD(function()
 	draw.RoundedBox(2, sbX, sbY, sbW, sbH, color_transparent_white)
 
 	-- Draw rupee picture in white box
-	surface.SetMaterial(image_materials[clr])
+	surface.SetMaterial(Material("rupees/" .. clr .. ".png"))
 	surface.DrawTexturedRect(mbX + 1, mbY + 6, 18, 18)
 
 	draw.SimpleText("RUPEES: " .. rupee_amount, "FC_HUD_30",
 		mbX + sbW + ((mbW - sbW) * 0.5) + 1, mbY + (mbH * 0.5),
 		rupee_color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-end)
+end
 
 -- Style 2
 --[[ Rupees in trapezoid
@@ -155,14 +145,14 @@ end)
       \ RUPEES /
        --------
 ]]--
-AddRupeeHUD(function()
-	local lp = LocalPlayer()
-	rupee_amount = lp:PS_GetPoints()
+local function RupeeHUDStyle2()
+	local plr = LocalPlayer()
+	rupee_amount = plr:PS_GetPoints()
 
 	local shape = {}
 	local fX1, fX2, fY1, fY2
 
-	if PlayerIsAlive(lp) then
+	if PlayerIsAlive(plr) then
 		-- tmpX is the center of the screen
 		local tmpX = (ScrW() * 0.5)
 		-- scrX = (center of the screen - (long trapezoid side / 2))
@@ -206,7 +196,7 @@ AddRupeeHUD(function()
 		end
 	end
 
-	-- unfunny Easter egg, shhh
+	-- Easter egg, shhh
 	local word = "RUPEES"
 	if rupee_amount > 999999 then
 		word = "PEEPEES"
@@ -221,17 +211,17 @@ AddRupeeHUD(function()
 
 	draw.DrawText(rupee_amount, "monosans2-rupees", fX1, fY1, rupee_color, TEXT_ALIGN_CENTER)
 	draw.DrawText(word, "monosans2-text", fX2, fY2, color_white, TEXT_ALIGN_CENTER)
-end)
+end
 
 -- Style 3
 -- Same rupee locations as Style 2, just without the trapezoid
-AddRupeeHUD(function()
-	local lp = LocalPlayer()
-	rupee_amount = lp:PS_GetPoints()
+local function RupeeHUDStyle3()
+	local plr = LocalPlayer()
+	rupee_amount = plr:PS_GetPoints()
 
 	local fX1, fX2, fY1, fY2
 
-	if PlayerIsAlive(lp) then
+	if PlayerIsAlive(plr) then
 		-- tmpX is the center of the screen
 		local tmpX = (ScrW() * 0.5)
 		-- scrX = (center of the screen - (long trapezoid side / 2))
@@ -271,19 +261,19 @@ AddRupeeHUD(function()
 
 	draw.DrawText(rupee_amount, "monosans2-rupees", fX1, fY1, rupee_color, TEXT_ALIGN_CENTER)
 	draw.DrawText(word, "monosans2-text", fX2, fY2, color_white, TEXT_ALIGN_CENTER)
-end)
+end
 
 -- Style 4
 -- Rupees in a rounded box (AKA, the shittiest looking style)
-AddRupeeHUD(function()
-	local lp = LocalPlayer()
-	rupee_amount = lp:PS_GetPoints()
+local function RupeeHUDStyle4()
+	local plr = LocalPlayer()
+	rupee_amount = plr:PS_GetPoints()
 
 	-- the letter `b' stands for box...for the roundedbox...the one that will be drawn
 	local bW, bH = 160, 70
 	local bX, bY
 
-	if PlayerIsAlive(lp) then
+	if PlayerIsAlive(plr) then
 		--bX = 270
 		--bY = ScrH() - 100
 		bX = (ScrW() * 0.5) - (bW / 2)
@@ -316,12 +306,12 @@ AddRupeeHUD(function()
 	-- `color_white' is a value defined by GMOD itself
 	draw.DrawText(word, "monosans2-text", fX1, fY1, color_white, TEXT_ALIGN_CENTER)
 	draw.DrawText(rupee_amount, "monosans2-rupees", fX2, fY2, rupee_color, TEXT_ALIGN_CENTER)
-end)
+end
 
 -- Style 5
-AddRupeeHUD(function()
-	local lp = LocalPlayer()
-	rupee_amount = lp:PS_GetPoints()
+local function RupeeHUDStyle5()
+	local plr = LocalPlayer()
+	rupee_amount = plr:PS_GetPoints()
 
 	surface.SetFont("monosans2-rupees")
 	local tSize = surface.GetTextSize(rupee_amount)
@@ -335,7 +325,7 @@ AddRupeeHUD(function()
 	local rtX, rtY
 	local rtaX, rtaY
 
-	if PlayerIsAlive(lp) then
+	if PlayerIsAlive(plr) then
 		-- Place in the top-middle.
 		local scrMiddle = ScrW() * 0.5
 
@@ -367,4 +357,16 @@ AddRupeeHUD(function()
 	draw.RoundedBox(4, fpX, fpY, fpW, fpH, color_greenish)
 
 	draw.SimpleText(rupee_amount, "monosans2-rupees", rtX, rtY, color_white, rtaX, rtaY)
-end)
+end
+
+-- Setup Rupee HUD painting stuff then paint that shit
+table.Add(GetRupeeHUDsTable(), {
+	RupeeHUDStyle1,
+	RupeeHUDStyle2,
+	RupeeHUDStyle3,
+	RupeeHUDStyle4,
+	RupeeHUDStyle5,
+})
+
+PaintRupeeHUD()
+

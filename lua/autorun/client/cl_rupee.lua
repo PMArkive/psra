@@ -1,15 +1,19 @@
 local Color = Color
 
+local function myChatAddText(...)
+	if psChatAddText then
+		return psChatAddText(...)
+	else
+		return chat.AddText(...)
+	end
+end
+
 -- HUD picking stuff
-local rupee_cookie = "RupeeHUD_" -- used by the 'rupee_style' command
+local rupee_cookie = "RupeeHUD_"
 local rupee_huds = {}
 
-hook.Add("OnGamemodeLoaded", "gimme dat rupee cookie", function()
-	rupee_cookie = rupee_cookie .. GAMEMODE.FolderName
-end)
-
-function AddRupeeHUD(index, func)
-	table.insert(rupee_huds, func)
+function GetRupeeHUDsTable()
+	return rupee_huds
 end
 
 local function RupeePickupSound()
@@ -37,9 +41,18 @@ net.Receive("rupee_end_round", function()
 
 	local amount = tostring(net.ReadInt(32))
 	local state = net.ReadUInt(8)
-	local str = (state == ROUND_SURVIVED) and "surviving" or "winning"
+	local str
 
-	psChatAddText(
+	if state == ROUND_SURVIVED then
+		str = "surviving"
+	elseif state == ROUND_WON then
+		str = "winning"
+	else
+		ErrorNoHalt("Bad value passed to \'state\'!")
+		return
+	end
+
+	myChatAddText(
 		chat_color,
 		"You received ",
 		amount_color,
@@ -59,7 +72,7 @@ net.Receive("rupee_drop_message", function()
 	local is_rupoor = net.ReadBool()
 
 	if is_rupoor then
-		psChatAddText(
+		myChatAddText(
 			chat_color,
 			"You dropped a ",
 			rupoor_purple,
@@ -72,7 +85,7 @@ net.Receive("rupee_drop_message", function()
 			" Rupees!"
 		)
 	else
-		psChatAddText(
+		myChatAddText(
 			chat_color,
 			"You dropped ",
 			amount_color,
@@ -103,7 +116,7 @@ net.Receive("rupee_pickup_message", function()
 
 	if pickup_plr == drop_plr then
 		if is_rupoor then
-			psChatAddText(
+			myChatAddText(
 				chat_color,
 				"You picked your ",
 				rupoor_purple,
@@ -113,7 +126,7 @@ net.Receive("rupee_pickup_message", function()
 			)
 		else
 			RupeePickupSound()
-			psChatAddText(
+			myChatAddText(
 				chat_color,
 				"You picked ",
 				amount_color,
@@ -126,17 +139,18 @@ net.Receive("rupee_pickup_message", function()
 		return -- Well, that's that, so let's leave.
 	end
 
-	local localplayer_pickup = LocalPlayer() == pickup_plr
-	local plr = localplayer_pickup and drop_plr or pickup_plr
+	local did_client_pickup = LocalPlayer() == pickup_plr
+	local plr = (did_client_pickup and drop_plr or pickup_plr)
 
 	local plr_name = IsValid(plr) and
-			(plr:GetName() .. (localplayer_pickup and "\'s" or "")) or
-			(localplayer_pickup and "somebody\'s" or "Somebody")
+			plr:GetName() .. (did_client_pickup and "\'s" or "")
+			or
+			(did_client_pickup and "somebody\'s" or "Somebody")
 
 	if amount == "0" then -- The amount can only be 0 if it's a rupoor.
-		if localplayer_pickup then
+		if did_client_pickup then
 			RupoorPickupSound()
-			psChatAddText(
+			myChatAddText(
 				chat_color,
 				"You picked up ",
 				plr_color,
@@ -148,7 +162,7 @@ net.Receive("rupee_pickup_message", function()
 			)
 		else
 			RupeePickupSound()
-			psChatAddText(
+			myChatAddText(
 				chat_color,
 				plr_color,
 				plr_name,
@@ -166,9 +180,9 @@ net.Receive("rupee_pickup_message", function()
 
 	-- This is ugly as fuckkkkkkkk, please forgive me Lord!
 	if is_rupoor then
-		if localplayer_pickup then
+		if did_client_pickup then
 			RupoorPickupSound()
-			psChatAddText(
+			myChatAddText(
 				chat_color,
 				"You picked ",
 				plr_color,
@@ -184,7 +198,7 @@ net.Receive("rupee_pickup_message", function()
 			)
 		else
 			RupeePickupSound()
-			psChatAddText(
+			myChatAddText(
 				chat_color,
 				plr_color,
 				plr_name,
@@ -201,9 +215,9 @@ net.Receive("rupee_pickup_message", function()
 			)
 		end
 	else
-		if localplayer_pickup then
+		if did_client_pickup then
 			RupeePickupSound()
-			psChatAddText(
+			myChatAddText(
 				chat_color,
 				"You picked ",
 				amount_color,
@@ -216,7 +230,7 @@ net.Receive("rupee_pickup_message", function()
 				" Rupees up!"
 			)
 		else
-			psChatAddText(
+			myChatAddText(
 				chat_color,
 				plr_color,
 				plr_name,
@@ -255,15 +269,15 @@ surface.CreateFont("Deathrun_SmoothRP", {
 })
 
 -- Rupee colors.
-local rcolor_diamond = Color(115, 230, 222)
-local rcolor_silver  = Color(192, 192, 192)
-local rcolor_gold    = Color(255, 215, 0)
-local rcolor_orange  = Color(205, 133, 0)
-local rcolor_purple  = Color(128, 0, 128)
-local rcolor_red     = Color(205, 55, 0)
-local rcolor_yellow  = Color(173, 255, 47)
-local rcolor_blue    = Color(113, 113, 198)
-local rcolor_green   = Color(0, 139, 69)
+local rcolor_diamond    = Color(115, 230, 222)
+local rcolor_silver     = Color(192, 192, 192)
+local rcolor_gold       = Color(255, 215, 0)
+local rcolor_orange     = Color(205, 133, 0)
+local rcolor_purple     = Color(128, 0, 128)
+local rcolor_red        = Color(205, 55, 0)
+local rcolor_yellow     = Color(173, 255, 47)
+local rcolor_blue       = Color(113, 113, 198)
+local rcolor_green      = Color(0, 139, 69)
 
 -- Rupee Colors.
 function RupeeColors1(rupees)
@@ -292,15 +306,15 @@ function RupeeColors1(rupees)
 end
 
 local function GetRupeeHUD(val)
-	local hud_index = (val or cookie.GetNumber(rupee_cookie, 1))
-	local hud = rupee_huds[hud_index]
+	local cookie_num = (val or cookie.GetNumber(rupee_cookie, 1))
+	local ret = rupee_huds[cookie_num]
 
-	if hud == nil then
+	if ret == nil then
 		print("[RUPEES] HUD style not found! Trying to use style #1.")
-		hud = rupee_huds[1]
+		ret = rupee_huds[1] or nil
 	end
 
-	return hud
+	return ret
 end
 
 function PaintRupeeHUD(hud_index)
@@ -325,31 +339,20 @@ concommand.Add("rupee_style", function(plr, cmd, args, fullStr)
 	end
 end, nil, "Used to pick the rupee HUD style.")
 
---[[ We have this shit because of a chat-box addon that is used by our server.
- With Scorpys Simple Chatbox, I just edited in the "psChatAddText" function
- so it would add a ruby icon to the side of the chat message. It seemed
- like the easiest option at the time to just edit it in.
- In "lua/scorpy_chatbox/sh_init.lua" it looks like the indented code below:
+-- Include the correct gamemode rupee file.
+hook.Add("OnGamemodeLoaded", "RupeeSetup", function()
+	print("[RUPEES] OnGamemodeLoaded hook called.")
 
- 	local oldChatAddText = chat.AddText
+	local folder = GAMEMODE.FolderName
+	local cl_gmfile = "rupees/cl_" .. folder .. ".lua"
+	rupee_cookie = rupee_cookie .. folder
 
- 	function psChatAddText(...)
- 		oldChatAddText(...)
-
- 		Chatbox = Chatbox or vgui.Create("ScorpyChatbox")
- 		Chatbox:AddMessage({...}, "icon16/ruby.png")
- 	end
-
- 	function chat.AddText(...)
- 		oldChatAddText(...)
-
- 		Chatbox = Chatbox or vgui.Create("ScorpyChatbox")
- 		Chatbox:AddMessage({...})
- 	end
-]]
-hook.Add("Initialize", "setup psChatAddText", function()
-	-- If SSC exists, then psChatAddText will be defined somewhere in there.
-	if not SSC then
-		psChatAddText = chat.AddText
+	-- Include the correct rupee file.
+	if file.Exists(cl_gmfile, "LUA") then
+		print("[RUPEES] Loading \"" .. cl_gmfile .. "\".")
+		include(cl_gmfile)
+	else
+		ErrorNoHalt("[RUPEES] Couldn't find \"" .. cl_gmfile .. "\"!\n")
 	end
 end)
+
