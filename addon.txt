@@ -2,6 +2,6 @@
 {
 	"name"        "PointShop Rupee Addon"
 	"version"     "2.0.3"
-	"author_name" "Your Mother"
+	"author_name" "pufftwitt"
 	"info"        "An addon that gives points/rupees to a player for use within the PointShop addon."
 }

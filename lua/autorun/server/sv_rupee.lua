@@ -12,6 +12,7 @@ mf("models/rupee/rupee_white.mdl")
 
 local sf = resource.AddSingleFile
 sf("sound/zelda/pickup.wav")
+sf("sound/zelda/rupoor_pickup.mp3")
 sf("resource/fonts/monosans2.ttf")
 sf("materials/rupees/white.png")
 sf("materials/rupees/green.png")
@@ -20,9 +21,12 @@ sf("materials/rupees/yellow.png")
 sf("materials/rupees/orange.png")
 sf("materials/rupees/blue.png")
 sf("materials/rupees/purple.png")
+--sf("materials/vgui/rupee_material.vmt")
+--sf("materials/vgui/rupee_material.vtf")
 sf("materials/models/rupee/white/rupee_whi.vmt")
 sf("materials/models/rupee/white/rupee_whi.vtf")
 sf("models/rupee/rupee_white.xbox.vtx")
+sf("models/rupee/rupee_white.sw.vtx")
 
 -- Setup network strings.
 util.AddNetworkString("rupee_pickup_sound")
