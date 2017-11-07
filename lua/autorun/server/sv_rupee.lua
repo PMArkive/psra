@@ -21,8 +21,8 @@ sf("materials/rupees/yellow.png")
 sf("materials/rupees/orange.png")
 sf("materials/rupees/blue.png")
 sf("materials/rupees/purple.png")
---sf("materials/vgui/rupee_material.vmt")
---sf("materials/vgui/rupee_material.vtf")
+sf("materials/vgui/rupee_material.vmt")
+sf("materials/vgui/rupee_material.vtf")
 sf("materials/models/rupee/white/rupee_whi.vmt")
 sf("materials/models/rupee/white/rupee_whi.vtf")
 sf("models/rupee/rupee_white.xbox.vtx")
@@ -133,6 +133,7 @@ local function CheckForTag(plr)
 	if not IsValid(plr) then return end
 	local sID, name = plr:SteamID(), plr:Name()
 
+	if not PSRA.TAG_STUFF then return end
 	if not IsTagInName(name) or IsSteamIdInTagFile(sID) then return end
 
 	-- A timer is used to prevent name changes giving a player two bonuses.
@@ -154,6 +155,7 @@ local function CheckForTagOnChange(plr, oldName, newName)
 	if not IsValid(plr) then return end
 	local sID = plr:SteamID()
 
+	if not PSRA.TAG_STUFF then return end
 	if not IsTagInName(newName) or IsSteamIdInTagFile(sID) then return end
 
 	AddSteamIdToTagFile(sID)
